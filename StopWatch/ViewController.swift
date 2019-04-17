@@ -29,9 +29,26 @@ class ViewController: UIViewController {
     
     @IBAction func btnStart(_ sender: Any) {
         if !timer.isValid{
-            timer = Timer.scheduledTimer(timeInterval: 0.01, target: self, selector: #selector(updateTime), userInfo: nil, repeats: true)
-        changeButtonState(start: false, pause: true, stop: true)
-      
+            //  선행 클로저
+//            timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true, block: { (Timer) in
+//                self.time += 1
+//                let min = self.time / 6000
+//                let sec = self.time / 100 - (min*60)
+//                let msec = self.time % 100
+//                let output = String(format: "%02d:%02d:%02d", min, sec, msec)
+//                self.Time.text = output
+//            })
+            
+            // 후행 클로저
+            timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) {(timer: Timer) -> Void in
+                self.time += 1
+                let min = self.time / 6000
+                let sec = self.time / 100 - (min*60)
+                let msec = self.time % 100
+                let output = String(format: "%02d:%02d:%02d", min, sec, msec)
+                self.Time.text = output
+            }
+            changeButtonState(start: false, pause: true, stop: true)
         }
         
        
@@ -49,15 +66,6 @@ class ViewController: UIViewController {
         time = 0
         Time.text = "00:00:00"
         changeButtonState(start: true, pause: false, stop: false)
-    }
-    
-    @objc func updateTime() {
-        time += 1
-        let min = time / 6000
-        let sec = time / 100 - (min*60)
-        let msec = time % 100
-        let output = String(format: "%02d:%02d:%02d", min, sec, msec)
-        Time.text = output
     }
     
     func changeButtonState(start : Bool, pause : Bool, stop : Bool) {
